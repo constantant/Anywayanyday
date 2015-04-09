@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Anywayanyday</title>
+	<link rel="stylesheet" href="/application/css/index.css" />
+</head>
+<body>
+<script type="text/javascript" src="/application/js/index.js"></script>
+<script type="text/javascript">
+	(function(){
+		var list = new app.FlightList({
+			'newRequestAction': 'http://api.anywayanyday.com/api/NewRequest3/',
+			'requestStateAction': 'http://api.anywayanyday.com/api/RequestState/',
+			'faresAction': 'http://api.anywayanyday.com/api/Fares2/',
+			'Route': '0105MOWLEDAD1CN0IN0SCE'
+		});
+
+		list.render();
+	})();
+</script>
+</body>
+</html>
