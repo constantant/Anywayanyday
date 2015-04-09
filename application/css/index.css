@@ -1,3 +1,6 @@
+body{
+	font-family: Arial, Helvetica, sans-serif;
+}
 .flights{
 	position: absolute;
 	left:0;
@@ -55,6 +58,7 @@
 .flights-tab{
 	display: block;
 	padding: 6px 10px;
+	font-size: 16px;
 }
 .flights-tab{}
 .flights-tab-current{
@@ -63,4 +67,38 @@
 .flights-tab:hover{
 	background-color: #eee;
 }
-.flights-info{}
+.flights-info{
+	position: relative;
+	padding: 10px;
+	margin: 0 0 20px;
+}
+.flights-info-amount{
+	font-size: 20px;
+	font-weight: bold;
+	margin: 0 0 2px;
+}
+.flights-info-title{
+	position: relative;
+	overflow: hidden;
+}
+
+.flights-info-direction{
+	position: relative;
+	overflow: hidden;
+	padding: 4px 0;
+}
+.flights-info-point{
+	float: left;
+}
+.flights-info-point-title{
+	font-size: 14px;
+}
+.flights-info-point-arrow{
+	float: left;
+	margin: 4px 10px 0 10px;
+	border-width: 5px 0 5px 10px;
+	border-style: solid;
+	border-color: transparent transparent transparent #666;
+	width: 0;
+	height: 0;
+}
