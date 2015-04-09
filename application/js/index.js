@@ -204,7 +204,8 @@ app.FlightList.prototype.getData = function(){
 			'R': this.idSynonym_
 		},
 		function(data){
-			this.decorateData(data);
+			this.setData(data);
+			this.decorateData();
 			this.showLoading(false);
 		},
 		this
@@ -212,26 +213,39 @@ app.FlightList.prototype.getData = function(){
 };
 
 /**
- * Decorate data
+ * sets data
  * @param {Object} data
  */
-app.FlightList.prototype.decorateData = function(data){
-	this.decorateTabs(data);
-	this.decorateContent(data);
+app.FlightList.prototype.setData = function(data){
+	console.log(data);
+	var references = data['References'];
+	this.airports_ = references['Airports'];
+	this.carriers_ = references['Carriers'];
+	this.planes_ = references['Planes'];
+	this.airlines_ = data['Airlines'];
+};
+
+/**
+ * Decorate data
+ */
+app.FlightList.prototype.decorateData = function(){
+	this.decorateTabs();
+	this.decorateContent();
 };
 
 /**
  * Decorate tabs
- * @param {Object} data
  */
-app.FlightList.prototype.decorateTabs = function(data){
-	var airlines =  data['Airlines'],
+app.FlightList.prototype.decorateTabs = function(){
+	var airlines =  this.airlines_,
 		airlinesLen = airlines.length, i = 0,
 		list = [];
 
 	for(;i<airlinesLen;i++){
-		console.log(airlines[i]);
-		list.push(app.FlightList.templateTab(airlines[i]));
+		list.push(app.FlightList.templateTab(
+				app.getDataByCode(this.carriers_, airlines[i]['Code'])
+			)
+		);
 	}
 
 	this.tabs_.innerHTML = list.join('');
@@ -239,9 +253,8 @@ app.FlightList.prototype.decorateTabs = function(data){
 
 /**
  * Decorate content
- * @param {Object} data
  */
-app.FlightList.prototype.decorateContent = function(data){
+app.FlightList.prototype.decorateContent = function(){
 
 };
 
@@ -251,7 +264,7 @@ app.FlightList.prototype.decorateContent = function(data){
  */
 app.FlightList.prototype.setLoadingProgress = function(completed){
 	this.loadingBar_.style.width = completed + '%';
-	this.loadingPercent_.innerHTML = completed;
+	this.loadingPercent_.innerHTML = completed + '%';
 };
 
 /**
@@ -304,7 +317,7 @@ app.FlightList.templateBase = function (opt_data) {
  * @param {Object=} opt_data
  */
 app.FlightList.templateTab = function (opt_data) {
-	return '<a href="javascript:;" class="flights-tab" data-code="'+ opt_data['Code'] +'">'+ opt_data['Code'] +'</a>';
+	return '<a href="javascript:;" class="flights-tab" data-code="'+ opt_data['Code'] +'">'+ opt_data['Name'] +'</a>';
 };
 
 /**
@@ -313,6 +326,21 @@ app.FlightList.templateTab = function (opt_data) {
  */
 app.FlightList.templateInfo = function (opt_data) {
 	return '<div class="flights-info" data-code="'+ opt_data['code'] +'">'+ opt_data['title'] +'</div>';
+};
+
+/**
+ * gets data by code
+ * @param {Array} data_list
+ * @param {String|Number} code
+ * @returns {Object}
+ */
+app.getDataByCode = function(data_list, code){
+	var len = data_list.length,i=0;
+	for(;i<len;i++){
+		if(data_list[i]['Code'] == code){
+			return data_list[i];
+		}
+	}
 };
 
 /**
