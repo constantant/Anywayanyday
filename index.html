@@ -9,7 +9,8 @@
 <script type="text/javascript" src="/application/js/index.js"></script>
 <script type="text/javascript">
 	(function(){
-		var list = new app.FlightList({
+		var list = new FlightList({
+			'updateDuration': 60E3, // 5 min
 			'newRequestAction': 'http://api.anywayanyday.com/api/NewRequest3/',
 			'requestStateAction': 'http://api.anywayanyday.com/api/RequestState/',
 			'faresAction': 'http://api.anywayanyday.com/api/Fares2/',

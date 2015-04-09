@@ -125,6 +125,13 @@ app.FlightList = function(options){
 	this.limit_ = options['Limit'] || 100;
 
 	/**
+	 * Update duration
+	 * @type {number|undefined}
+	 * @private
+	 */
+	this.updateDuration_ = options['updateDuration'] || 10000;
+
+	/**
 	 * Current tab
 	 * @type {String}
 	 * @private
@@ -240,6 +247,14 @@ app.FlightList.prototype.decorateData = function(){
 		this.currentTab_ = this.carriers_[0]['Code'];
 	}
 	this.decorateContent();
+	this.waitingUpdates();
+};
+
+app.FlightList.prototype.waitingUpdates = function(){
+	var self_=this;
+	setTimeout(function(){
+		self_.newRequest();
+	}, this.updateDuration_);
 };
 
 /**
@@ -254,7 +269,7 @@ app.FlightList.prototype.decorateTabs = function(){
 		code = airlines[i]['Code'];
 		data = app.getDataByCode(this.carriers_, code);
 
-		data['Current'] = (i == 0);
+		data['Current'] = this.currentTab_ ? (this.currentTab_ == code) : (i == 0);
 		data['Total'] = app.getDataByCode(this.airlines_, code)['Fares'].length;
 
 		list.push(app.FlightList.templateTab(data));
@@ -372,15 +387,14 @@ app.FlightList.prototype.showLoading = function(opt_show){
 /**
  * Render to view
  * @param {Element=} opt_element
- * @export
  */
-app.FlightList.prototype.render = function(opt_element){
+app.FlightList.prototype['render'] = function(opt_element){
 	(opt_element || document.body).appendChild(this.element_);
 };
 
 /**
  * Class types
- * @enum {String}
+ * @enum {string}
  */
 app.FlightList.ClassType = {
 	TABS:'flights-tabs',
@@ -461,7 +475,7 @@ app.FlightList.templateInfoPointArrow = function (opt_data) {
  * gets data by code
  * @param {Array} data_list
  * @param {String|Number} code
- * @returns {Object}
+ * @returns {Object|null}
  */
 app.getDataByCode = function(data_list, code){
 	var len = data_list.length,i=0;
@@ -470,13 +484,14 @@ app.getDataByCode = function(data_list, code){
 			return data_list[i];
 		}
 	}
+	return null;
 };
 
 /**
  *
  * @param {Function} template
  * @param {Object=} opt_data
- * @returns {!HTMLElement}
+ * @returns {!HTMLElement|null}
  */
 app.getElementByTemplate = function(template, opt_data){
 	var	wrapper = document.createElement('div');
@@ -485,9 +500,10 @@ app.getElementByTemplate = function(template, opt_data){
 	if (wrapper.childNodes.length == 1) {
 		var firstChild = wrapper.firstChild;
 		if (firstChild.nodeType == 1) {
-			return /** @type {!Element} */ (firstChild);
+			return /** @type {!HTMLElement} */ (firstChild);
 		}
 	}
+	return null;
 };
 
 Number.prototype.formatMoney = function(c, d, t){
@@ -496,7 +512,9 @@ Number.prototype.formatMoney = function(c, d, t){
 		d = d == undefined ? "." : d,
 		t = t == undefined ? "," : t,
 		s = n < 0 ? "-" : "",
-		i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "",
+		i = parseInt(n = Math.abs(+n || 0).toFixed(c), 10) + "",
 		j = (j = i.length) > 3 ? j % 3 : 0;
 	return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
 };
+
+window['FlightList'] = app.FlightList;
